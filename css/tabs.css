@@ -26,6 +26,10 @@
 	background: #ffffff;
 }
 
+.tab-header:last-child {
+	margin-bottom: 0;
+}
+
 @media (min-width: 576px) {
 	.tab-header {
 		border-radius: 10px 10px 0 0;
@@ -38,7 +42,7 @@
 }
 
 .tab-item-group {
-	border-radius: 0 5px 5px 5px;
+	border-radius: 0 0 5px 5px;
 	background: #a9effc;
 }
 
