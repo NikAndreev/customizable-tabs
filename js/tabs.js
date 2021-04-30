@@ -1,41 +1,55 @@
 document.addEventListener("DOMContentLoaded", function(){
 
-	let tabContainerGroup = document.querySelectorAll(".tab-container"); 
+	let tabContainerGroup = document.querySelectorAll(".js-tab-container"); 
 
 	tabContainerGroup.forEach(tabContainer => {
-		let tabHeaderGroup = tabContainer.querySelectorAll(".tab-header");
-		let tabItemGroup = tabContainer.querySelectorAll(".tab-item");
 
-		tabHeaderGroup[0].classList.add("active");
-		tabItemGroup[0].classList.add("active");
-		tabItemGroup[0].classList.add("transition");
+		let tabInfo = {
+			current_tab: 1
+		}
+
+		let tabHeaderGroup = tabContainer.querySelectorAll(".js-tab-header");
+		let tabItemGroup = tabContainer.querySelectorAll(".js-tab-item");
+
+		switchTabs();
 
 		tabHeaderGroup.forEach(tabHeader => {
 			tabHeader.addEventListener("click", function() {
-				let currentTabIndex = this.dataset.tabIndex;
-
-				tabHeaderGroup.forEach(tabHeader => {
-					let tabHeaderIndex = tabHeader.dataset.tabIndex;
-
-					(currentTabIndex === tabHeaderIndex) ? tabHeader.classList.add("active") : tabHeader.classList.remove("active"); 
-				})
-
-				tabItemGroup.forEach( tabItem => {
-					let tabItemIndex = tabItem.dataset.tabIndex;
-
-					if (currentTabIndex === tabItemIndex) {
-						tabItem.classList.add("active");
-						setTimeout(() => {
-							tabItem.classList.add("transition");
-						});
-					} else {
-						tabItem.classList.remove("active");
-						tabItem.classList.remove("transition");
-					}
-
-				})
+				tabInfo.current_tab = this.dataset.tabIndex;
+				switchTabs();
 			});
 		});
+
+		function switchTabs() {
+			switchTabHeaders();
+			switchTabItems();
+		}
+
+
+		function switchTabHeaders() {
+		    tabHeaderGroup.forEach( tabHeader => {
+		      if (tabHeader.dataset.tabIndex == tabInfo.current_tab) {
+		        tabHeader.classList.add("active");
+		      } else {
+		        tabHeader.classList.remove("active");
+		      }
+		    })
+		}
+
+		function switchTabItems() {
+			tabItemGroup.forEach( tabItem => {
+		      if (tabItem.dataset.tabIndex == tabInfo.current_tab) {
+		        tabItem.classList.add("active");
+		        setTimeout(() => {
+		          tabItem.classList.add("transition");
+		        });
+		      } else {
+		        tabItem.classList.remove("active");
+		        tabItem.classList.remove("transition");
+		      }
+		    })
+		}
+
 	})
 	
 });
