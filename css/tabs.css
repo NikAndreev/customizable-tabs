@@ -47,16 +47,16 @@
 	}
 }
 
-.js-tab-item {
+.tab-item {
 	display: none;
 }
 
-.js-tab-item.active {
+.tab-item.active {
 	display: block;
 	opacity: 0;
 	transition: opacity 0.5s;
 }
 
-.js-tab-item.transition {
+.tab-item.transition {
 	opacity: 1;
 }
