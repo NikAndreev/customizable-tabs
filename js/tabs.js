@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function(){
 	tabContainerGroup.forEach(tabContainer => {
 
 		let tabInfo = {
-			current_tab: 1
+			current_tab_index: 1
 		}
 
 		let tabHeaderGroup = tabContainer.querySelectorAll(".js-tab-header");
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 		tabHeaderGroup.forEach(tabHeader => {
 			tabHeader.addEventListener("click", function() {
-				tabInfo.current_tab = this.dataset.tabIndex;
+				tabInfo.current_tab_index = this.dataset.tabIndex;
 				switchTabs();
 			});
 		});
@@ -27,8 +27,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 		function switchTabHeaders() {
+			let currentTabIndex = tabInfo.current_tab_index;
+
 		    tabHeaderGroup.forEach( tabHeader => {
-		      if (tabHeader.dataset.tabIndex == tabInfo.current_tab) {
+		      if (tabHeader.dataset.tabIndex == currentTabIndex) {
 		        tabHeader.classList.add("active");
 		      } else {
 		        tabHeader.classList.remove("active");
@@ -37,8 +39,10 @@ document.addEventListener("DOMContentLoaded", function(){
 		}
 
 		function switchTabItems() {
+			let currentTabIndex = tabInfo.current_tab_index;
+
 			tabItemGroup.forEach( tabItem => {
-		      if (tabItem.dataset.tabIndex == tabInfo.current_tab) {
+		      if (tabItem.dataset.tabIndex == currentTabIndex) {
 		        tabItem.classList.add("active");
 		        setTimeout(() => {
 		          tabItem.classList.add("transition");
