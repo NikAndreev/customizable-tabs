@@ -5,6 +5,7 @@
 .tab-container {
 	font-family: 'Roboto', sans-serif;
 	color: rgba(68, 68, 68, 1);
+	max-width: 900px;
 }
 
 .tab-header-group {
@@ -25,6 +26,7 @@
 	overflow-x: hidden;
 	text-overflow: ellipsis;
 	color: rgba(68, 68, 68, 0.4);
+	user-select: none;
 }
 
 .tab-header.active {
@@ -59,4 +61,22 @@
 
 .tab-item.transition {
 	opacity: 1;
+}
+
+p {
+	margin: 15px 0;
+}
+
+p:first-child {
+	margin-top: 0;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+img {
+	vertical-align: top;
+	width: 100%;
+	max-width: 300px;
 }
