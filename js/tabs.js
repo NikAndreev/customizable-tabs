@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	tabContainerGroup.forEach( tabContainer => {
 
 		const tabInfo = {
-			current_tab_index: 1
+			tab_index_current: 1
 		}
 
 		const tabHeaderGroup = tabContainer.querySelectorAll('.tabs__header');
@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function(){
 			const target = event.target;
 
 			if (target.closest('.tabs__header')) {
-				const currentTabHeader = target.closest('.tabs__header');
-				tabInfo.current_tab_index = Number(currentTabHeader.dataset.tabIndex);
+				const tabHeaderCurrent = target.closest('.tabs__header');
+				tabInfo.tab_index_current = Number(tabHeaderCurrent.dataset.tabIndex);
 				switchTabs();
 			}
 		});
@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 		function switchTabHeaders() {
-			const currentTabIndex = tabInfo.current_tab_index;
+			const tabIndexСurrent = tabInfo.tab_index_current;
 
 		    tabHeaderGroup.forEach( tabHeader => {
-		      if ( Number(tabHeader.dataset.tabIndex) === currentTabIndex ) {
+		      if ( Number(tabHeader.dataset.tabIndex) === tabIndexСurrent ) {
 		        tabHeader.classList.add('active');
 		      } else {
 		        tabHeader.classList.remove('active');
@@ -42,10 +42,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		}
 
 		function switchTabItems() {
-			const currentTabIndex = tabInfo.current_tab_index;
+			const tabIndexСurrent = tabInfo.tab_index_current;
 
 			tabItemGroup.forEach( tabItem => {
-		      if ( Number(tabItem.dataset.tabIndex) === currentTabIndex ) {
+		      if ( Number(tabItem.dataset.tabIndex) === tabIndexСurrent ) {
 		        tabItem.classList.add('active');
 		      } else {
 		        tabItem.classList.remove('active');
