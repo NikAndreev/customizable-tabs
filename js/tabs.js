@@ -1,23 +1,26 @@
 document.addEventListener('DOMContentLoaded', function(){
 
-	let tabContainerGroup = document.querySelectorAll('.js-tab-container'); 
+	const tabContainerGroup = document.querySelectorAll('.tabs'); 
 
-	tabContainerGroup.forEach(tabContainer => {
+	tabContainerGroup.forEach( tabContainer => {
 
-		let tabInfo = {
+		const tabInfo = {
 			current_tab_index: 1
 		}
 
-		let tabHeaderGroup = tabContainer.querySelectorAll('.js-tab-header');
-		let tabItemGroup = tabContainer.querySelectorAll('.js-tab-item');
+		const tabHeaderGroup = tabContainer.querySelectorAll('.tabs__header');
+		const tabItemGroup = tabContainer.querySelectorAll('.tabs__item');
 
 		switchTabs();
 
-		tabHeaderGroup.forEach(tabHeader => {
-			tabHeader.addEventListener('click', function() {
-				tabInfo.current_tab_index = this.dataset.tabIndex;
+		tabContainer.addEventListener('click', function(event) {
+			const target = event.target;
+
+			if (target.closest('.tabs__header')) {
+				const currentTabHeader = target.closest('.tabs__header');
+				tabInfo.current_tab_index = Number(currentTabHeader.dataset.tabIndex);
 				switchTabs();
-			});
+			}
 		});
 
 		function switchTabs() {
@@ -27,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 		function switchTabHeaders() {
-			let currentTabIndex = tabInfo.current_tab_index;
+			const currentTabIndex = tabInfo.current_tab_index;
 
 		    tabHeaderGroup.forEach( tabHeader => {
-		      if (tabHeader.dataset.tabIndex == currentTabIndex) {
+		      if ( Number(tabHeader.dataset.tabIndex) === currentTabIndex ) {
 		        tabHeader.classList.add('active');
 		      } else {
 		        tabHeader.classList.remove('active');
@@ -39,17 +42,13 @@ document.addEventListener('DOMContentLoaded', function(){
 		}
 
 		function switchTabItems() {
-			let currentTabIndex = tabInfo.current_tab_index;
+			const currentTabIndex = tabInfo.current_tab_index;
 
 			tabItemGroup.forEach( tabItem => {
-		      if (tabItem.dataset.tabIndex == currentTabIndex) {
+		      if ( Number(tabItem.dataset.tabIndex) === currentTabIndex ) {
 		        tabItem.classList.add('active');
-		        setTimeout(() => {
-		          tabItem.classList.add('transition');
-		        });
 		      } else {
 		        tabItem.classList.remove('active');
-		        tabItem.classList.remove('transition');
 		      }
 		    })
 		}
