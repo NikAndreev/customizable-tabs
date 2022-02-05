@@ -14,11 +14,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		switchTabs();
 
 		tabContainer.addEventListener('click', function(event) {
-			const target = event.target;
-
-			if (target.closest('.tabs__header')) {
-				const tabHeaderCurrent = target.closest('.tabs__header');
-				tabInfo.tab_index_current = Number(tabHeaderCurrent.dataset.tabIndex);
+			if (event.target.closest('.tabs__header')) {
+				tabInfo.tab_index_current = Number(event.target.closest('.tabs__header').dataset.tabIndex);
 				switchTabs();
 			}
 		});
@@ -28,29 +25,16 @@ document.addEventListener('DOMContentLoaded', function(){
 			switchTabItems();
 		}
 
-
 		function switchTabHeaders() {
-			const tabIndexСurrent = tabInfo.tab_index_current;
-
-		    tabHeaderGroup.forEach( tabHeader => {
-		      if ( Number(tabHeader.dataset.tabIndex) === tabIndexСurrent ) {
-		        tabHeader.classList.add('active');
-		      } else {
-		        tabHeader.classList.remove('active');
-		      }
-		    })
+			tabHeaderGroup.forEach( tabHeader => {
+				Number(tabHeader.dataset.tabIndex) === tabInfo.tab_index_current ? tabHeader.classList.add('active') : tabHeader.classList.remove('active')
+			})
 		}
 
 		function switchTabItems() {
-			const tabIndexСurrent = tabInfo.tab_index_current;
-
 			tabItemGroup.forEach( tabItem => {
-		      if ( Number(tabItem.dataset.tabIndex) === tabIndexСurrent ) {
-		        tabItem.classList.add('active');
-		      } else {
-		        tabItem.classList.remove('active');
-		      }
-		    })
+				Number(tabItem.dataset.tabIndex) === tabInfo.tab_index_current ? tabItem.classList.add('active') : tabItem.classList.remove('active')
+			})
 		}
 
 	})
