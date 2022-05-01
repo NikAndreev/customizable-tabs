@@ -1,42 +1,89 @@
 document.addEventListener('DOMContentLoaded', function(){
 
-	const tabContainerGroup = document.querySelectorAll('.tabs'); 
+	class Tabs {
+		#tabIndex
+		#indexes = []
+		#tabsEl
+		#control
+		#controlActiveClass
+		#controlEl
+		#itemEl
+		#itemActiveClass
+		#history
 
-	tabContainerGroup.forEach( tabContainer => {
+		constructor(tabs, config) {
+			this.#tabsEl = tabs
+			this.#control = config.control
+			this.#controlActiveClass = config.controlActiveClass
+			this.#controlEl = this.#tabsEl.querySelectorAll(this.#control)
+			this.#itemEl =  this.#tabsEl.querySelectorAll(config.tab)
+			this.#itemActiveClass = config.tabActiveClass
+			
+			this.#controlEl.forEach(control => {
+				this.#indexes.push(control.dataset.index)
+			})
 
-		const tabInfo = {
-			tab_index_current: 1
-		}
+			this.#history = config.history
+			if (this.#history) {
+				this.#tabIndex = this.#indexes.find(index => index === location.hash.slice(1)) || this.#indexes[0]
+				
+				window.addEventListener('hashchange', () => {
+					const hash = location.hash.slice(1)
 
-		const tabHeaderGroup = tabContainer.querySelectorAll('.tabs__header');
-		const tabItemGroup = tabContainer.querySelectorAll('.tabs__item');
+					if (!hash) {
+						this.#tabIndex = this.#indexes[0]
+						this.#switchTabs()
+					}
 
-		switchTabs();
-
-		tabContainer.addEventListener('click', function(event) {
-			if (event.target.closest('.tabs__header')) {
-				tabInfo.tab_index_current = Number(event.target.closest('.tabs__header').dataset.tabIndex);
-				switchTabs();
+					if (this.#indexes.find(index => index === hash)) {
+						this.#tabIndex = hash
+						this.#switchTabs()
+					}
+				})
+			} else {
+				this.#tabIndex = this.#indexes[0]
 			}
-		});
 
-		function switchTabs() {
-			switchTabHeaders();
-			switchTabItems();
-		}
+			this.#switchTabs()
 
-		function switchTabHeaders() {
-			tabHeaderGroup.forEach( tabHeader => {
-				Number(tabHeader.dataset.tabIndex) === tabInfo.tab_index_current ? tabHeader.classList.add('active') : tabHeader.classList.remove('active')
+			this.#tabsEl.addEventListener('click', event => {
+				if (event.target.closest(this.#control)) {
+					const index = event.target.closest(this.#control).dataset.index
+
+					if (this.#history) {
+						location.hash = index
+					} else {
+						this.#tabIndex = index
+						this.#switchTabs()
+					}
+				}
 			})
 		}
 
-		function switchTabItems() {
-			tabItemGroup.forEach( tabItem => {
-				Number(tabItem.dataset.tabIndex) === tabInfo.tab_index_current ? tabItem.classList.add('active') : tabItem.classList.remove('active')
+		#switchTabs() {
+			this.#switchControl()
+			this.#switchItems()
+		}
+
+		#switchControl() {
+			this.#controlEl.forEach( control => {
+				String(this.#tabIndex) === control.dataset.index ? control.classList.add(this.#controlActiveClass) : control.classList.remove(this.#controlActiveClass)
 			})
 		}
 
+		#switchItems() {
+			this.#itemEl.forEach( item => {
+				String(this.#tabIndex) === item.dataset.index ? item.classList.add(this.#itemActiveClass) : item.classList.remove(this.#itemActiveClass) 
+			})
+		}
+	}
+
+	new Tabs(document.querySelector('[data-tabs]'), {
+		control: '[data-control]',
+		controlActiveClass: 'active',
+		tab: '[data-tab]',
+		tabActiveClass: 'active',
+		history: true
 	})
 	
-});
+})
