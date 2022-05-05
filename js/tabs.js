@@ -1,79 +1,70 @@
 document.addEventListener('DOMContentLoaded', function(){
 
 	class Tabs {
-		#tabIndex
-		#indexes = []
-		#tabsEl
-		#control
-		#controlActiveClass
-		#controlEl
-		#itemEl
-		#itemActiveClass
-		#history
-
 		constructor(tabs, config) {
-			this.#tabsEl = tabs
-			this.#control = config.control
-			this.#controlActiveClass = config.controlActiveClass
-			this.#controlEl = this.#tabsEl.querySelectorAll(this.#control)
-			this.#itemEl =  this.#tabsEl.querySelectorAll(config.tab)
-			this.#itemActiveClass = config.tabActiveClass
-			
-			this.#controlEl.forEach(control => {
-				this.#indexes.push(control.dataset.index)
+			this._tabsEl = tabs
+			this._control = config.control
+			this._controlActiveClass = config.controlActiveClass
+			this._controlEl = this._tabsEl.querySelectorAll(this._control)
+			this._itemEl =  this._tabsEl.querySelectorAll(config.tab)
+			this._itemActiveClass = config.tabActiveClass
+
+			this._indexes = []
+			this._controlEl.forEach(control => {
+				this._indexes.push(control.dataset.index)
 			})
 
-			this.#history = config.history
-			if (this.#history) {
-				this.#tabIndex = this.#indexes.find(index => index === location.hash.slice(1)) || this.#indexes[0]
+			this._history = config.history
+			if (this._history) {
+				this._tabIndex = this._indexes.find(index => index === location.hash.slice(1)) || this._indexes[0]
 				
 				window.addEventListener('hashchange', () => {
 					const hash = location.hash.slice(1)
 
 					if (!hash) {
-						this.#tabIndex = this.#indexes[0]
-						this.#switchTabs()
+						this._tabIndex = this._indexes[0]
+						this._switchTabs()
 					}
 
-					if (this.#indexes.find(index => index === hash)) {
-						this.#tabIndex = hash
-						this.#switchTabs()
+					if (this._indexes.find(index => index === hash)) {
+						this._tabIndex = hash
+						this._switchTabs()
 					}
 				})
 			} else {
-				this.#tabIndex = this.#indexes[0]
+				this._tabIndex = this._indexes[0]
 			}
 
-			this.#switchTabs()
+			this._switchTabs()
 
-			this.#tabsEl.addEventListener('click', event => {
-				if (event.target.closest(this.#control)) {
-					const index = event.target.closest(this.#control).dataset.index
+			this._tabsEl.addEventListener('click', event => {
+				if (event.target.closest(this._control)) {
+					const index = event.target.closest(this._control).dataset.index
 
-					if (this.#history) {
+					if (this._history) {
 						location.hash = index
 					} else {
-						this.#tabIndex = index
-						this.#switchTabs()
+						this._tabIndex = index
+						this._switchTabs()
 					}
 				}
 			})
 		}
 
-		#switchTabs() {
-			this.#switchControl()
-			this.#switchItems()
+		_switchTabs() {
+			this._switchControl()
+			this._switchItems()
 		}
 
-		#switchControl() {
-			this.#controlEl.forEach( control => {
-				String(this.#tabIndex) === control.dataset.index ? control.classList.add(this.#controlActiveClass) : control.classList.remove(this.#controlActiveClass)
+		_switchControl() {
+			this._controlEl.forEach( control => {
+				String(this._tabIndex) === control.dataset.index ? control.classList.add(this._controlActiveClass) : control.classList.remove(this._controlActiveClass)
 			})
 		}
 
-		#switchItems() {
-			this.#itemEl.forEach( item => {
-				String(this.#tabIndex) === item.dataset.index ? item.classList.add(this.#itemActiveClass) : item.classList.remove(this.#itemActiveClass) 
+		_switchItems() {
+			this._itemEl.forEach( item => {
+				String(this._tabIndex) === item.dataset.index ? item.classList.add(this._itemActiveClass) : item.classList.remove(this._itemActiveClass) 
 			})
 		}
 	}
@@ -85,5 +76,5 @@ document.addEventListener('DOMContentLoaded', function(){
 		tabActiveClass: 'active',
 		history: true
 	})
-	
+
 })
