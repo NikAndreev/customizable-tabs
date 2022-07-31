@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function(){
 
 	class Tabs {
+		tabIndex = ''
+
 		constructor(tabs, config) {
 			this._tabsEl = tabs
 			this._controlsEl = this._tabsEl.querySelectorAll(config.control)
@@ -8,65 +10,136 @@ document.addEventListener('DOMContentLoaded', function(){
 			this._containersEl = this._tabsEl.querySelectorAll(config.container)
 			this._containerActiveClass = config.containerActiveClass
 
+			if (typeof config.on === 'object') {
+				this._setCallbacks(config.on)
+			}
+
 			this._setIndexes()
 
-			this._initTabIndex(config.history)
+			this._init(config.history)
 
 			this._setHandler(config.history)
 
 			if (config.history) {
+				this._hashObserverHandler = this._hashObserverHandler.bind(this)
 				this._setHashObserver()
 			}
 
+			this._controlsClickHandler = this._controlsClickHandler.bind(this)
+			this._setControlsClickHandler()
+
+			if (this._onInit) {
+				this._onInit()
+			}
+		}
+
+		destroy() {
+			this._removeControlsClickHandler()
+			this._removeHashObserver()
+
+			this._tabsEl = null
+			this._controlsEl = null
+			this._controlActiveClass = null
+			this._containersEl = null
+			this._containerActiveClass = null
+
+			if (this._onDestroy) {
+				this._onDestroy()
+			}
+
+			this._removeCallbacks()
+		}
+
+		_toggleTabs(index) {
+			this.tabIndex = index
 			this._switchTabs()
 
-			this._setControlsClickHandler()
+			if (this._onToggle) {
+				this._onToggle()
+			}
+		}
+
+		_setCallbacks(config) {
+			if (typeof config.init === 'function') {
+				this._onInit = config.init
+			}
+
+			if (typeof config.toggle === 'function') {
+				this._onToggle = config.toggle
+			}
+
+			if (typeof config.destroy === 'function') {
+				this._onDestroy = config.destroy
+			}
+		}
+
+		_removeCallbacks() {
+			if (this._onInit) {
+				this._onInit = null
+			}
+			
+			if (this._onToggle) {
+				this._onToggle = null
+			}
+
+			if (this._onDestroy) {
+				this._onDestroy = null
+			}
 		}
 
 		_setIndexes() {
-			this._indexes = []
+			this.indexes = []
 			this._controlsEl.forEach(control => {
-				this._indexes.push(control.dataset.index)
+				this.indexes.push(control.dataset.index)
 			})
 		}
 
-		_initTabIndex(history) {
+		_init(history) {
 			if (history) {
-				this._tabIndex = this._indexes.find(index => index === location.hash.slice(1)) || this._indexes[0]
+				this._toggleTabs(this.indexes.find(index => index === location.hash.slice(1)) || this.indexes[0])
 			} else {
-				this._tabIndex = this._indexes[0]
+				this._toggleTabs(this.indexes[0])
 			}
 		}
 
 		_setHandler(history) {
 			if (history) {
-				this._handler = e => location.hash = e.currentTarget.dataset.index
+				this.handler = index => location.hash = index
 			} else {
-				this._handler = e => {
-					this._tabIndex = e.currentTarget.dataset.index
-					this._switchTabs()
-				}
+				this.handler = index => this._toggleTabs(index) 
 			}
 		}
 
 		_setHashObserver() {
-			window.addEventListener('hashchange', () => {
-				const hash = location.hash.slice(1)
+			window.addEventListener('hashchange', this._hashObserverHandler)
+		}
 
-				if (!hash) {
-					this._tabIndex = this._indexes[0]
-					this._switchTabs()
-				}
+		_removeHashObserver() {
+			window.removeEventListener('hashchange', this._hashObserverHandler)
+		}
 
-				if (this._indexes.find(index => index === hash)) {
-					this._tabIndex = hash
-					this._switchTabs()
-				}
-			})
+		_hashObserverHandler() {
+			const hash = location.hash.slice(1)
+
+			if (!hash) {
+				this._toggleTabs(this.indexes[0])
+			}
+
+			if (this.indexes.find(index => index === hash)) {
+				this._toggleTabs(hash)
+			}
 		}
 
 		_setControlsClickHandler() {
-			this._controlsEl.forEach(el => el.addEventListener('click', this._handler))
+			this._controlsEl.forEach(el => el.addEventListener('click', this._controlsClickHandler))
+		}
+
+		_removeControlsClickHandler() {
+			this._controlsEl.forEach(el => el.removeEventListener('click', this._controlsClickHandler))
+		}
+
+		_controlsClickHandler(e) {
+			this.handler(e.currentTarget.dataset.index)
 		}
 
 		_switchTabs() {
@@ -76,13 +149,13 @@ document.addEventListener('DOMContentLoaded', function(){
 
 		_switchControls() {
 			this._controlsEl.forEach( control => {
-				String(this._tabIndex) === control.dataset.index ? control.classList.add(this._controlActiveClass) : control.classList.remove(this._controlActiveClass)
+				String(this.tabIndex) === control.dataset.index ? control.classList.add(this._controlActiveClass) : control.classList.remove(this._controlActiveClass)
 			})
 		}
 
 		_switchContainers() {
 			this._containersEl.forEach( container => {
-				String(this._tabIndex) === container.dataset.index ? container.classList.add(this._containerActiveClass) : container.classList.remove(this._containerActiveClass) 
+				String(this.tabIndex) === container.dataset.index ? container.classList.add(this._containerActiveClass) : container.classList.remove(this._containerActiveClass) 
 			})
 		}
 	}
@@ -92,7 +165,18 @@ document.addEventListener('DOMContentLoaded', function(){
 		controlActiveClass: 'active',
 		container: '[data-container]',
 		containerActiveClass: 'active',
-		history: true
+		history: true,
+		on: {
+			init: function () {
+				console.log('Tabs initialized');
+			},
+			toggle: function () {
+				console.log('Tabs toggled');
+			},
+			destroy: function () {
+				console.log('Tabs destroyed');
+			}
+		},
 	}
 
 	document.querySelectorAll('[data-tabs]').forEach( tabs => {
